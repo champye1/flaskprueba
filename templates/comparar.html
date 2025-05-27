@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Comparar Teléfonos</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body { background: transparent; color: #fff; font-family: 'Roboto', Arial, sans-serif; margin: 0; }
+        h1 { color: #ff9800; text-align: center; margin-top: 0; font-size: 1.5rem; }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; min-width: 600px; border-collapse: collapse; background: transparent; border-radius: 12px; overflow: hidden; }
+        th, td { padding: 10px 6px; text-align: left; font-size: 1rem; }
+        th { background: transparent; color: #ff9800; font-size: 1.08rem; text-align: left; }
+        tr { background: transparent; }
+        img { width: 70px; height: 55px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto; }
+        a.button { display: inline-block; background: #ff9800; color: #232526; padding: 5px 10px; border-radius: 6px; font-weight: bold; text-decoration: none; margin-top: 6px; font-size: 0.95rem; }
+        a.button:hover { background: #fff; color: #ff9800; }
+        .volver { display: none; }
+        @media (max-width: 900px) {
+            table { min-width: 400px; }
+            img { width: 55px; height: 40px; }
+        }
+        @media (max-width: 700px) {
+            table { min-width: 320px; }
+            th, td { font-size: 0.85rem; padding: 5px 2px; }
+            img { width: 40px; height: 28px; }
+        }
+        @media (max-width: 500px) {
+            .table-responsive { overflow-x: auto; }
+            table { min-width: 220px; font-size: 0.82rem; }
+            th, td { font-size: 0.8rem; padding: 3px 1px; }
+            img { width: 28px; height: 18px; }
+            h1 { font-size: 1rem; }
+        }
+        @media (max-width: 400px) {
+            table { min-width: 160px; }
+        }
+        .compare-img-cell { text-align: center; vertical-align: middle; }
+        .compare-img { width: 90px; height: 70px; object-fit: cover; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); background: #232526; margin: 0 auto; display: block; }
+</style>
+</head>
+<body>
+    <h1>Comparación</h1>
+    {% set phone_count = phones|length %}
+{% set max_compare = 2 %}
+{% if phone_count > 0 %}
+<div class="table-responsive">
+<table>
+    <tr>
+        <th>Imagen</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td class="compare-img-cell"><img src="{{ phones[i].image_url }}" alt="{{ phones[i].name }}" class="compare-img"></td>
+            {% else %}
+                <td class="compare-img-cell"></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Modelo</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].name }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Descripción</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].description }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>RAM</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].ram }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Almacenamiento</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].storage }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Cámara</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].camera }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Batería</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>{{ phones[i].battery }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Precio</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td>${{ '%.2f'|format(phones[i].price) }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        <th>Comprar</th>
+        {% for i in range(max_compare) %}
+            {% if phones|length > i %}
+                <td><a href="#" class="button">Comprar</a></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+</table>
+</div>
+{% else %}
+    <p style="text-align:center;font-size:1.1rem;margin-top:20px;">No se seleccionaron teléfonos para comparar.</p>
+    {% endif %}
+</body>
+</html>
+@media (max-width: 900px) {
+    table { min-width: 400px; }
+    .compare-img { width: 65px; height: 48px; }
+}
+@media (max-width: 700px) {
+    table { min-width: 320px; }
+    th, td { font-size: 0.85rem; padding: 5px 2px; }
+    .compare-img { width: 45px; height: 32px; }
+}
+@media (max-width: 500px) {
+    .table-responsive { overflow-x: auto; }
+    table { min-width: 220px; font-size: 0.82rem; }
+    th, td { font-size: 0.8rem; padding: 3px 1px; }
+    .compare-img { width: 32px; height: 18px; }
+    h1 { font-size: 1rem; }
+}
+@media (max-width: 400px) {
+    table { min-width: 160px; }
+}

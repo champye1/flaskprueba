@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Recurso - API RESTful</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #232526 0%, #414345 100%); color: #fff; min-height: 100vh; }
+        header { background: #181818; padding: 1rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        nav { display: flex; justify-content: center; gap: 2rem; }
+        nav a { color: #ff9800; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        nav a:hover { color: #fff; }
+        .hero { background: url('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat; padding: 3rem 0 2rem 0; text-align: center; border-bottom: 4px solid #ff9800; }
+        .hero h1 { font-size: 2.2rem; margin: 0 0 0.5rem 0; color: #ff9800; text-shadow: 1px 1px 8px #000; }
+        .hero p { font-size: 1.1rem; color: #fff; text-shadow: 1px 1px 8px #000; }
+        .add-container { max-width: 420px; margin: 2rem auto; background: rgba(30,30,30,0.95); padding: 2rem 2.5rem 1.5rem 2.5rem; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+        .add-container h2 { color: #ff9800; margin-bottom: 1.5rem; text-align: center; }
+        .add-container form { display: flex; flex-direction: column; gap: 1.1rem; }
+        .add-container input[type="text"] { padding: 0.7rem; border: none; border-radius: 6px; background: #232526; color: #fff; font-size: 1rem; }
+        .add-container button { background: #ff9800; color: #fff; border: none; padding: 0.8rem; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .add-container button:hover { background: #e65100; }
+        .success-message { color: #4caf50; background: #1a2d1a; padding: 0.5rem 1rem; border-radius: 6px; margin-bottom: 1rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/api">API RESTful</a>
+            <a href="/gestion">Gestión</a>
+            <a href="/educacion">Educación</a>
+            <a href="/blog">Blog</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/auth">Autenticación</a>
+        </nav>
+    </header>
+    <div class="hero">
+        <h1>Añadir Recurso a la API</h1>
+        <p>Solo los administradores pueden añadir nuevos recursos a la API RESTful.</p>
+    </div>
+    <div class="add-container">
+        <h2>Nuevo Recurso</h2>
+        {% if message %}
+        <div class="success-message">{{ message }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="text" name="nombre" placeholder="Nombre del recurso" required>
+            <button type="submit">Añadir</button>
+        </form>
+    </div>
+</body>
+</html>

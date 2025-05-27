@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - Tecnología de Teléfonos</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: #fff;
+        }
+        header {
+            background: #232526;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            color: #ff9800;
+        }
+        nav {
+            margin-top: 12px;
+        }
+        nav a {
+            color: #ff9800;
+            text-decoration: none;
+            margin: 0 18px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        .hero {
+            background: url('https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 60px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .hero h2 {
+            background: rgba(35,37,38,0.85);
+            padding: 24px 36px;
+            border-radius: 12px;
+            font-size: 2.2rem;
+            color: #fff;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 40px 0 0 0;
+            gap: 32px;
+        }
+        .card {
+            background: #313335;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+            width: 260px;
+            padding: 28px 20px 20px 20px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 8px 24px rgba(255,152,0,0.25);
+        }
+        .card-title {
+            font-size: 1.3rem;
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+        .card-desc {
+            font-size: 1rem;
+            color: #ddd;
+            margin-bottom: 18px;
+        }
+        .card a {
+            display: inline-block;
+            background: #ff9800;
+            color: #232526;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .card a:hover {
+            background: #fff;
+            color: #ff9800;
+        }
+        @media (max-width: 900px) {
+            .cards { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tecnología de Teléfonos</h1>
+        <nav>
+            <a href="/api">API RESTful</a>
+            <a href="/gestion">Gestión</a>
+            <a href="/educacion">Educación</a>
+            <a href="/blog">Blog</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/auth">Autenticación</a>
+        </nav>
+    </header>
+    <div class="hero">
+        <h2>Descubre lo último en tecnología móvil y servicios digitales</h2>
+    </div>
+    <div id="sidebarCompare" style="position:fixed;top:0;left:-500px;width:420px;max-width:95vw;height:100vh;background:#232526;box-shadow:2px 0 16px rgba(0,0,0,0.25);z-index:9999;transition:left 0.4s;overflow-y:auto;padding:32px 18px 18px 18px;border-top-right-radius:18px;border-bottom-right-radius:18px;">
+        <button onclick="closeSidebar()" style="position:absolute;top:18px;right:18px;background:#ff9800;color:#232526;border:none;border-radius:6px;padding:6px 14px;font-weight:bold;cursor:pointer;font-size:1.1rem;">Cerrar</button>
+        <h2 style="color:#ff9800;text-align:center;margin-bottom:24px;font-size:2rem;">Comparación</h2>
+        <div id="compareContent" style="margin-top:18px;"></div>
+    </div>
+    <section class="cards">
+        <form id="compareForm">
+            <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+            {% for phone in phones %}
+            <div class="card">
+                <img src="{{ phone.image_url }}" alt="{{ phone.name }}" style="width:100%;height:180px;object-fit:cover;border-radius:8px 8px 0 0;">
+                <div class="card-title">{{ phone.name }}</div>
+                <div class="card-desc">{{ phone.description }}</div>
+                <ul style="list-style:none;padding:0;margin:0 0 10px 0;text-align:left;font-size:0.98rem;">
+                    <li><strong>RAM:</strong> {{ phone.ram }}</li>
+                    <li><strong>Almacenamiento:</strong> {{ phone.storage }}</li>
+                    <li><strong>Cámara:</strong> {{ phone.camera }}</li>
+                    <li><strong>Batería:</strong> {{ phone.battery }}</li>
+                    <li><strong>Precio:</strong> ${{ '%.2f'|format(phone.price) }}</li>
+                </ul>
+                <input type="checkbox" name="compare" value="{{ phone.id }}" onclick="limitCheckboxes(this)"> Comparar
+                <a href="#" class="buy-btn" data-id="{{ phone.id }}" style="margin-top:8px;display:block;background:#ff9800;color:#232526;padding:10px 0;border-radius:6px;font-weight:bold;text-decoration:none;font-size:1.1rem;">Comprar</a>
+            </div>
+            {% endfor %}
+            </div>
+            <button type="submit" style="margin:32px auto 0 auto;display:block;background:#ff9800;color:#232526;padding:10px 28px;border-radius:8px;font-size:1.1rem;font-weight:bold;border:none;cursor:pointer;">Comparar seleccionados</button>
+        </form>
+    </section>
+    <script>
+    // Limit comparison to 2 checkboxes
+    function limitCheckboxes(clicked) {
+        const checkboxes = document.querySelectorAll('input[name="compare"]');
+        const checked = Array.from(checkboxes).filter(cb => cb.checked);
+        if (checked.length > 2) {
+            clicked.checked = false;
+            alert('Solo puedes comparar hasta 2 productos.');
+        }
+    }
+    function openSidebar() {
+        document.getElementById('sidebarCompare').style.left = '0';
+    }
+    function closeSidebar() {
+        document.getElementById('sidebarCompare').style.left = '-500px';
+    }
+    document.getElementById('compareForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const checked = Array.from(document.querySelectorAll('input[name="compare"]:checked')).map(cb => cb.value);
+        if (checked.length === 0) {
+            alert('Selecciona al menos un teléfono para comparar.');
+            return;
+        }
+        if (checked.length > 2) {
+            alert('Solo puedes comparar hasta 2 productos.');
+            return;
+        }
+        const params = checked.map(id => 'compare=' + encodeURIComponent(id)).join('&');
+        const resp = await fetch('/comparar?' + params);
+        const html = await resp.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const table = doc.querySelector('table');
+        document.getElementById('compareContent').innerHTML = table ? table.outerHTML : '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
+        openSidebar();
+    };
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+        btn.onclick = async function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            const resp = await fetch('/comparar?compare=' + encodeURIComponent(id));
+            const html = await resp.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const table = doc.querySelector('table');
+            document.getElementById('compareContent').innerHTML = table ? table.outerHTML : '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
+            openSidebar();
+        };
+    });
+    </script>
+</body>
+</html>
