@@ -108,12 +108,13 @@
     <header>
         <h1>Tecnología de Teléfonos</h1>
         <nav>
-            <a href="/api">API RESTful</a>
-            <a href="/gestion">Gestión</a>
-            <a href="/educacion">Educación</a>
-            <a href="/blog">Blog</a>
-            <a href="/dashboard">Dashboard</a>
+            <a href="/">Inicio</a>
             <a href="/auth">Autenticación</a>
+            <a href="/register" style="font-weight:700;">Crear Cuenta</a>
+            {% if session.role == 'admin' %}
+            <a href="/admin/info">Info Admin</a>
+            <a href="/phones" style="font-weight:bold;">Teléfonos</a>
+            {% endif %}
         </nav>
     </header>
     <div class="hero">
@@ -179,8 +180,12 @@
         const html = await resp.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        const container = doc.querySelector('.compare-container');
         const table = doc.querySelector('table');
-        document.getElementById('compareContent').innerHTML = table ? table.outerHTML : '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
+        const styleTag = doc.querySelector('style');
+        const styleHTML = styleTag ? styleTag.outerHTML : '';
+        const targetHTML = container ? (styleHTML + container.outerHTML) : (table ? table.outerHTML : null);
+        document.getElementById('compareContent').innerHTML = targetHTML || '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
         openSidebar();
     };
     document.querySelectorAll('.buy-btn').forEach(btn => {
@@ -191,8 +196,12 @@
             const html = await resp.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
+            const container = doc.querySelector('.compare-container');
             const table = doc.querySelector('table');
-            document.getElementById('compareContent').innerHTML = table ? table.outerHTML : '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
+            const styleTag = doc.querySelector('style');
+            const styleHTML = styleTag ? styleTag.outerHTML : '';
+            const targetHTML = container ? (styleHTML + container.outerHTML) : (table ? table.outerHTML : null);
+            document.getElementById('compareContent').innerHTML = targetHTML || '<p style="text-align:center;">No se encontraron datos para comparar.</p>';
             openSidebar();
         };
     });

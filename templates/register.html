@@ -122,12 +122,8 @@
     <header>
         <nav>
             <a href="/">Inicio</a>
-            <a href="/api">API RESTful</a>
-            <a href="/gestion">Gestión</a>
-            <a href="/educacion">Educación</a>
-            <a href="/blog">Blog</a>
-            <a href="/dashboard">Dashboard</a>
             <a href="/auth">Autenticación</a>
+            <a href="/register">Crear Cuenta</a>
         </nav>
     </header>
     <div class="hero">
@@ -140,17 +136,19 @@
         <div class="error-message">{{ error }}</div>
         {% endif %}
         <form method="POST" action="/register">
+            <input type="text" name="first_name" placeholder="Nombre" required>
+            <input type="text" name="last_name" placeholder="Apellido" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="text" name="address" placeholder="Dirección" required>
             <input type="text" name="username" placeholder="Nombre de usuario" required>
             <input type="password" name="password" placeholder="Contraseña" required>
-            <select name="role" required>
-                <option value="user">Usuario</option>
-                <option value="admin">Administrador</option>
-            </select>
-            <button type="submit">Registrarse</button>
+            <input type="password" name="confirm" placeholder="Confirmar contraseña" required>
+            <button type="submit">Crear cuenta segura</button>
         </form>
         <div class="login-link">
             ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>
         </div>
+        <p style="margin-top:1rem;font-size:0.9rem;color:#ddd;">Tu información se procesa de forma segura y solo se utiliza para crear tu cuenta y mejorar tu experiencia. Nunca compartimos tus datos con terceros sin tu consentimiento.</p>
     </div>
 </body>
 </html>

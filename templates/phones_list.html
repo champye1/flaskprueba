@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Teléfonos - Gestión</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body { margin:0; font-family:'Roboto', Arial, sans-serif; background: linear-gradient(135deg, #232526 0%, #414345 100%); color:#fff; }
+        header { background:#232526; padding:24px 0 16px 0; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+        header h1 { margin:0; font-size:2rem; letter-spacing:2px; color:#ff9800; }
+        nav a { color:#ff9800; text-decoration:none; margin:0 12px; font-weight:700; }
+        .container { max-width:900px; margin:32px auto; background:#313335; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.18); padding:24px; }
+        .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+        .btn { background:#ff9800; color:#232526; padding:8px 16px; border-radius:6px; font-weight:bold; text-decoration:none; border:none; cursor:pointer; }
+        table { width:100%; border-collapse: collapse; }
+        th, td { padding:10px; text-align:left; }
+        th { color:#ff9800; }
+        tr { border-bottom:1px solid rgba(255,255,255,0.08); }
+        .actions a, .actions form { display:inline-block; margin-right:8px; }
+        .actions form button { background:#ff9800; color:#232526; padding:6px 10px; border-radius:6px; border:none; cursor:pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tecnología de Teléfonos</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/auth">Autenticación</a>
+            <a href="/register">Crear Cuenta</a>
+            {% if session.role == 'admin' %}
+            <a href="/admin/info">Info Admin</a>
+            {% endif %}
+        </nav>
+    </header>
+    <div class="container">
+        <div class="topbar">
+            <h2 style="margin:0;">Listado de Teléfonos</h2>
+            {% if session.role == 'admin' %}
+            <a class="btn" href="/phones/new">Nuevo Teléfono</a>
+            {% endif %}
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Modelo</th>
+                        <th>RAM</th>
+                        <th>Almacenamiento</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for phone in phones %}
+                    <tr>
+                        <td>{{ phone.id }}</td>
+                        <td>{{ phone.name }}</td>
+                        <td>{{ phone.ram }}</td>
+                        <td>{{ phone.storage }}</td>
+                        <td>${{ '%.2f'|format(phone.price) }}</td>
+                        <td class="actions">
+                            <a class="btn" href="/phones/{{ phone.id }}">Ver</a>
+                            {% if session.role == 'admin' %}
+                            <a class="btn" href="/phones/{{ phone.id }}/edit">Editar</a>
+                            <form method="POST" action="/phones/{{ phone.id }}/delete" onsubmit="return confirm('¿Eliminar este teléfono?');">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

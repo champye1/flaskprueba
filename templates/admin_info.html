@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Información para Administradores</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#232526; --card:#2b2e31; --accent:#ff9800; --text:#fff; --muted:#b0b3b8; }
+    body { background: var(--bg); color: var(--text); font-family: 'Roboto', Arial, sans-serif; margin: 0; }
+    header { padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    nav a { color: var(--text); margin-right: 14px; text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+    h1 { color: var(--accent); margin: 20px 18px 12px; }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 18px 24px; }
+    .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+    .card h2 { margin: 0 0 8px; color: var(--accent); font-size: 1.2rem; }
+    .card p { margin: 6px 0; color: var(--muted); }
+    ul { margin: 8px 0 8px 18px; }
+    code { background: #1f2123; padding: 2px 6px; border-radius: 6px; }
+    .code-block { background:#1f2123; color:#fff; padding:10px 12px; border-radius:8px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .code-block code { display:block; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; font-family: monospace; }
+    .links a { display:inline-block; background: var(--accent); color:#232526; padding:8px 12px; border-radius:8px; font-weight:bold; text-decoration:none; margin-right:8px; }
+    .links a:hover { background:#fff; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/phones">Teléfonos</a>
+      <a href="/logout">Cerrar sesión</a>
+    </nav>
+  </header>
+  <h1>Información para Administradores</h1>
+  <div class="container">
+    <div class="card">
+      <h2>¿De qué trata esta página?</h2>
+      <p>Este sitio muestra un catálogo de teléfonos con comparación de hasta 2 modelos y gestión de productos para administradores.</p>
+      <p>El rol <strong>admin</strong> es único y se garantiza en la base de datos mediante un índice parcial de SQLite.</p>
+    </div>
+    <div class="card">
+      <h2>Arquitectura y tecnologías</h2>
+      <ul>
+        <li>Backend: <strong>Flask</strong> + <strong>Flask‑SQLAlchemy</strong> + <strong>Jinja2</strong>.</li>
+        <li>Base de datos: <strong>SQLite</strong> en <code>instance/example.db</code>.</li>
+        <li>Frontend: HTML/CSS y JS simple con <em>fetch</em>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>API REST aplicada</h2>
+      <p>Se exponen endpoints JSON para el catálogo. Las operaciones de lectura son públicas; escritura requiere sesión de admin.</p>
+      <ul>
+        <li><code>GET /api/phones</code> — lista de teléfonos (200).</li>
+        <li><code>GET /api/phones/&lt;id&gt;</code> — detalle (200/404).</li>
+        <li><code>POST /api/phones</code> — crear (201, solo admin).</li>
+        <li><code>PUT /api/phones/&lt;id&gt;</code> — actualizar parcial (200, solo admin).</li>
+        <li><code>DELETE /api/phones/&lt;id&gt;</code> — eliminar (200, solo admin).</li>
+      </ul>
+      <p>Validaciones: <code>name</code> y <code>description</code> obligatorios; <code>price</code> numérico; errores devuelven códigos <code>400/403/404</code>.</p>
+    </div>
+    <div class="card">
+      <h2>Ejemplos de uso</h2>
+      <p><strong>Frontend</strong></p>
+      <div class="code-block"><code>fetch('/api/phones').then(r => r.json()).then(data => console.log(data))</code></div>
+      <p><strong>cURL (admin logeado en navegador, cookies de sesión)</strong></p>
+      <div class="code-block"><code>curl -X POST http://127.0.0.1:5000/api/phones -H "Content-Type: application/json" -d '{"name":"Nuevo","description":"Desc","ram":"8GB","storage":"128GB","camera":"50MP","battery":"4500mAh","price":599.99,"image_url":"https://..."}'</code></div>
+    </div>
+    <div class="card">
+      <h2>Acciones de administración</h2>
+      <ul>
+        <li>Gestionar teléfonos: <code>/phones</code> (crear/editar/eliminar).</li>
+        <li>Reiniciar catálogo a 2 modelos de ejemplo: <code>/admin/reset_phones</code>.</li>
+      </ul>
+      <div class="links">
+        <a href="/phones">Ir a Teléfonos</a>
+        <a href="/api/phones">Ver JSON</a>
+        <a href="/admin/reset_phones">Reiniciar catálogo</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
