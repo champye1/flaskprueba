@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>API Docs – Catálogo de Teléfonos</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#232526; --card:#2b2e31; --accent:#4caf50; --text:#fff; --muted:#b0b3b8; }
+    body { background: var(--bg); color: var(--text); font-family: 'Roboto', Arial, sans-serif; margin: 0; }
+    header { padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    nav a { color: var(--text); margin-right: 14px; text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+    h1 { color: var(--accent); margin: 20px 18px 12px; }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 18px 24px; }
+    .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+    .card h2 { margin: 0 0 8px; color: var(--accent); font-size: 1.2rem; }
+    .card p { margin: 6px 0; color: var(--muted); }
+    ul { margin: 8px 0 8px 18px; }
+    code { background: #1f2123; padding: 2px 6px; border-radius: 6px; }
+    .code-block { background:#1f2123; color:#fff; padding:10px 12px; border-radius:8px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .code-block code { display:block; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; font-family: monospace; }
+    .endpoint { font-weight: bold; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.1); margin-right:6px; }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentación pública del API REST del catálogo de teléfonos: endpoints, filtros, paginación y comparación.">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/phones">Teléfonos</a>
+      <a href="/api/docs">API Docs</a>
+    </nav>
+  </header>
+  <h1>API REST – Documentación</h1>
+  <div class="container">
+    <div class="card">
+      <h2>Introducción</h2>
+      <p>Este API expone el catálogo de teléfonos en JSON. Lectura es pública; creación/edición/eliminación requieren sesión de administrador.</p>
+    </div>
+    <div class="card">
+      <h2>Endpoints principales</h2>
+      <ul>
+        <li><span class="pill">GET</span> <span class="endpoint">/api/phones</span> — listado con filtros, orden y paginación.</li>
+        <li><span class="pill">GET</span> <span class="endpoint">/api/phones/&lt;id&gt;</span> — detalle por ID.</li>
+        <li><span class="pill">POST</span> <span class="endpoint">/api/phones</span> — crear (admin).</li>
+        <li><span class="pill">PUT</span> <span class="endpoint">/api/phones/&lt;id&gt;</span> — actualizar (admin).</li>
+        <li><span class="pill">DELETE</span> <span class="endpoint">/api/phones/&lt;id&gt;</span> — eliminar (admin).</li>
+        <li><span class="pill">GET</span> <span class="endpoint">/api/compare?ids=1,2</span> — comparación JSON por IDs.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Listado con filtros</h2>
+      <p>Parámetros: <code>q</code> (búsqueda), <code>min_price</code>, <code>max_price</code>, <code>sort</code> (id|name|price), <code>order</code> (asc|desc), <code>page</code>, <code>page_size</code> (1–100), <code>fields</code> (CSV de campos).</p>
+      <div class="code-block"><code>GET /api/phones?q=samsung&min_price=500&max_price=900&sort=price&order=asc&page=1&page_size=5
+Response 200
+{
+  "items": [ {"id":1,"name":"Samsung ...","price":799.99, ...} ],
+  "meta": {"page":1,"page_size":5,"total":10,"pages":2,"has_next":true,"has_prev":false},
+  "links": {"self":"http://localhost:5000/api/phones?q=samsung&..."}
+}</code></div>
+      <p>Seleccionar campos: <code>/api/phones?fields=id,name,price</code></p>
+    </div>
+
+    <div class="card">
+      <h2>Comparación de modelos</h2>
+      <p>Envíe al menos dos IDs separados por coma.</p>
+      <div class="code-block"><code>GET /api/compare?ids=1,2
+Response 200
+{
+  "phones": [ {"id":1,"name":"Samsung ..."}, {"id":2,"name":"iPhone ..."} ],
+  "differences": { "price": [799.99, 999.99], "storage": ["256GB", "128GB"] }
+}</code></div>
+    </div>
+
+    <div class="card">
+      <h2>Ejemplos rápidos</h2>
+      <p><strong>Fetch (frontend)</strong></p>
+      <div class="code-block"><code>fetch('/api/phones?q=pro&sort=price&order=desc')
+  .then(r => r.json())
+  .then(data => console.log(data.items))</code></div>
+      <p><strong>cURL (crear como admin)</strong></p>
+      <div class="code-block"><code>curl -X POST http://127.0.0.1:5000/api/phones \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Demo","description":"Desc","ram":"8GB","storage":"128GB","camera":"50MP","battery":"4500mAh","price":599.99,"image_url":"https://..."}'</code></div>
+    </div>
+
+    <div class="card">
+      <h2>Errores y validaciones</h2>
+      <ul>
+        <li>404: recurso no encontrado.</li>
+        <li>403: operación requiere sesión de admin.</li>
+        <li>400: parámetros inválidos (paginación, precio, IDs).</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

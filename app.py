@@ -160,8 +160,75 @@ def phone_to_dict(p: Phone):
 
 @app.route('/api/phones', methods=['GET'])
 def api_phones_list():
-    phones = Phone.query.order_by(Phone.id.desc()).all()
-    return jsonify([phone_to_dict(p) for p in phones]), 200
+    # Query params: q (search), min_price, max_price, sort, order, page, page_size, fields
+    q = (request.args.get('q') or '').strip()
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
+    sort = (request.args.get('sort') or 'id').lower()
+    order = (request.args.get('order') or 'desc').lower()
+    try:
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 10))
+    except ValueError:
+        return jsonify({'error': 'invalid_pagination'}), 400
+
+    if page < 1 or page_size < 1 or page_size > 100:
+        return jsonify({'error': 'invalid_pagination'}), 400
+
+    query = Phone.query
+    if q:
+        like = f"%{q}%"
+        query = query.filter((Phone.name.like(like)) | (Phone.description.like(like)))
+
+    def parse_price(val):
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return None
+
+    mp = parse_price(min_price)
+    if mp is not None:
+        query = query.filter(Phone.price >= mp)
+    Mp = parse_price(max_price)
+    if Mp is not None:
+        query = query.filter(Phone.price <= Mp)
+
+    # Sorting: allowed fields: id, name, price
+    sort_col = Phone.id
+    if sort == 'name':
+        sort_col = Phone.name
+    elif sort == 'price':
+        sort_col = Phone.price
+
+    if order == 'asc':
+        query = query.order_by(sort_col.asc())
+    else:
+        query = query.order_by(sort_col.desc())
+
+    total = query.count()
+    items = query.offset((page - 1) * page_size).limit(page_size).all()
+
+    # Optional field selection
+    fields = request.args.get('fields')
+    def select_fields(d):
+        if not fields:
+            return d
+        allowed = set([f.strip() for f in fields.split(',') if f.strip()])
+        return {k: v for k, v in d.items() if k in allowed}
+
+    data = [select_fields(phone_to_dict(p)) for p in items]
+    meta = {
+        'page': page,
+        'page_size': page_size,
+        'total': total,
+        'pages': (total + page_size - 1) // page_size,
+        'has_next': page * page_size < total,
+        'has_prev': page > 1,
+    }
+    links = {
+        'self': request.base_url + ('?' + request.query_string.decode('utf-8') if request.query_string else ''),
+    }
+    return jsonify({'items': data, 'meta': meta, 'links': links}), 200
 
 @app.route('/api/phones/<int:phone_id>', methods=['GET'])
 def api_phone_detail(phone_id):
@@ -169,6 +236,32 @@ def api_phone_detail(phone_id):
     if not phone:
         return jsonify({'error': 'not_found'}), 404
     return jsonify(phone_to_dict(phone)), 200
+
+@app.route('/api/compare', methods=['GET'])
+def api_compare():
+    # ids=1,2,3
+    ids_param = (request.args.get('ids') or '').strip()
+    if not ids_param:
+        return jsonify({'error': 'ids_required'}), 400
+    try:
+        ids = [int(x) for x in ids_param.split(',') if x.strip()]
+    except ValueError:
+        return jsonify({'error': 'invalid_ids'}), 400
+    if len(ids) < 2:
+        return jsonify({'error': 'need_at_least_two_ids'}), 400
+    phones = Phone.query.filter(Phone.id.in_(ids)).all()
+    if len(phones) < 2:
+        return jsonify({'error': 'not_enough_found', 'found': len(phones)}), 404
+    items = [phone_to_dict(p) for p in phones]
+    # Compute differences across comparable keys
+    keys = ['name','description','ram','storage','camera','battery','price']
+    diffs = {}
+    for k in keys:
+        values = [it.get(k) for it in items]
+        same = all(v == values[0] for v in values)
+        if not same:
+            diffs[k] = values
+    return jsonify({'phones': items, 'differences': diffs}), 200
 
 @app.route('/api/phones', methods=['POST'])
 def api_phone_create():
@@ -330,6 +423,11 @@ def admin_reset_phones():
 @admin_required
 def admin_info():
     return render_template('admin_info.html')
+
+@app.route('/api/docs')
+def api_docs():
+    # Página pública con guía rápida del API
+    return render_template('api_docs.html')
 
 if __name__ == '__main__':
     with app.app_context():

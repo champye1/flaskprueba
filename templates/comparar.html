@@ -11,8 +11,8 @@
             --accent: #ff9800;
             --muted: #b0b3b8;
         }
-        body { background: transparent; color: var(--text); font-family: 'Roboto', Arial, sans-serif; margin: 0; }
-        h1 { color: var(--accent); text-align: center; margin: 0 0 12px; font-size: 1.6rem; }
+        /* Evitar estilos globales que afecten otras páginas al incrustar en el panel */
+        .compare-title { color: var(--accent); text-align: center; margin: 0 0 12px; font-size: 1.6rem; }
         .compare-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -45,7 +45,7 @@
     </style>
     </head>
 <body>
-    <h1>Comparación</h1>
+    <h1 class="compare-title">Comparación</h1>
     {% set phone_count = phones|length %}
     {% if phone_count > 0 %}
         <div class="compare-container">
